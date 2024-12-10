@@ -1,0 +1,22 @@
+[
+  {
+    "_id": "1",
+    "question": "What is the capital of France?",
+    "answers": [
+      { "text": "London", "isCorrect": false },
+      { "text": "Berlin", "isCorrect": false },
+      { "text": "Paris", "isCorrect": true },
+      { "text": "Madrid", "isCorrect": false }
+    ]
+  },
+  {
+    "_id": "2",
+    "question": "Which planet is closest to the Sun?",
+    "answers": [
+      { "text": "Venus", "isCorrect": false },
+      { "text": "Mercury", "isCorrect": true },
+      { "text": "Earth", "isCorrect": false },
+      { "text": "Mars", "isCorrect": false }
+    ]
+  }
+]
