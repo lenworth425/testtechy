@@ -1,6 +1,5 @@
 [
   {
-    "_id": "1",
     "question": "What is the capital of France?",
     "answers": [
       { "text": "London", "isCorrect": false },
@@ -10,7 +9,6 @@
     ]
   },
   {
-    "_id": "2",
     "question": "Which planet is closest to the Sun?",
     "answers": [
       { "text": "Venus", "isCorrect": false },

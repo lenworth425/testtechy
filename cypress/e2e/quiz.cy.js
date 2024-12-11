@@ -1,93 +1,83 @@
-describe('Quiz Component E2E Tests', () => {
+import { questionList } from '../fixtures/questions.json';
+describe('Tech Quiz E2E Tests', () => {
     beforeEach(() => {
-      // Use cy.intercept with more specific matching
-      cy.intercept({
-        method: 'GET',
-        url: '/api/questions/random'
-      }, (req) => {
-        // Log the intercepted request for debugging
-        console.log('Intercepted request:', req.url);
+        cy.intercept('GET', 'http://127.0.0.1:3001/api/questions', {
+            statusCode: 200,
+            fixture: 'questions.json'
+        }).as('questions');
+
+      cy.visit('http://127.0.0.1:3001'); 
+    });
+    
+
+    it('should render start quiz button initially', () => {        
+        cy.get('button').contains('Start Quiz').should('be.visible');
+
+        cy.intercept('GET', '**/questions', (req) => {
+            console.log('Intercepted request:', req);
+            req.reply({ fixture: 'questions.json' });
+          });
+    });
+  
+    it('should start quiz and display the first question', () => {
+        cy.get('button').contains('Start Quiz').click();
+
+        cy.intercept('GET', 'http://127.0.0.1:3001/api/questions/random', {
+            statusCode: 200,
+            fixture: 'questions.json'
+        }).as('getQuestions');
         
-        // Respond with mock data
-        req.reply({
-          statusCode: 200,
-          body: [
-            {
-              question: "What is the capital of France?",
-              answers: [
-                { text: "London", isCorrect: false },
-                { text: "Berlin", isCorrect: false },
-                { text: "Paris", isCorrect: true },
-                { text: "Madrid", isCorrect: false }
-              ]
-            },
-            {
-              question: "Which planet is closest to the Sun?",
-              answers: [
-                { text: "Venus", isCorrect: false },
-                { text: "Mercury", isCorrect: true },
-                { text: "Earth", isCorrect: false },
-                { text: "Mars", isCorrect: false }
-              ]
-            }
-          ]
-        });
-      }).as('getQuestions');
-  
-      // Stub console.error to prevent test failures
-      cy.on('window:console', (console) => {
-        cy.stub(console, 'error').callsFake((...args) => {
-          // Log the error for debugging
-          cy.log('Console error:', ...args);
-        });
-      });
-  
-      cy.visit('localhost:3001');
+
+        cy.get('.card h2').should('exist');
+
+        cy.get('.btn.btn-primary').should('have.length.greaterThan', 0);
     });
-  
-    it('should start the quiz when the start button is clicked', () => {
-      // Debugging: log all network requests
-      cy.intercept('GET', '*').log('GET Request');
-  
-      // Find and click the start button
-      cy.get('button')
-        .contains('Start Quiz')
-        .should('be.visible')
-        .click();
-  
-      // Wait for questions with longer timeout and logging
-      cy.get('@getQuestions', { timeout: 10000 }).then((interception) => {
-        // Log the intercepted request details
-        cy.log('Interception details:', JSON.stringify(interception));
+
+
+    it('should answer a question correctly and move to the next question', () => {
+        cy.get('button').contains('Start Quiz').click();
+    
+        cy.intercept('GET', 'http://127.0.0.1:3001/api/questions/random', {
+            statusCode: 200,
+            fixture: 'questions.json'
+        }).as('getQuestions');
         
-        // Verify the response
-        expect(interception.response.statusCode).to.equal(200);
-        expect(interception.response.body).to.have.length.greaterThan(0);
-      });
-  
-      // Verify first question is displayed
-      cy.contains('What is the capital of France?', { timeout: 10000 })
-        .should('be.visible');
+
+        cy.get('.card h2').should('exist');
+
+        cy.get('.btn.btn-primary').first().click();
     });
-  
-    // ... rest of the tests remain the same, just add similar debugging to wait() calls
-  
-    // Add a test to explicitly check the API endpoint
-    it('should fetch questions from the correct endpoint', () => {
-      // Create a spy on the fetch method
-      cy.window().then((win) => {
-        cy.stub(win, 'fetch').callsFake((url, options) => {
-          cy.log(`Fetch called with URL: ${url}`);
-          return win.fetch(url, options);
+    
+    it('should complete the quiz and show the score', () => {
+        cy.get('button').contains('Start Quiz').click();
+        
+        cy.intercept('GET', 'http://127.0.0.1:3001/api/questions', { 
+            statusCode: 200,
+            fixture: 'questions.json' 
+        }).as('getQuestions');
+    
+        cy.get('.btn.btn-primary', { timeout: 10000 }).first().click();
+
+        cy.get('.card h2').contains('Quiz Completed').should('exist');
+        cy.get('.alert.alert-success').should('contain', 'Your score:');
+    });
+
+    it('should allow the user to retake the quiz', () => {
+        cy.get('button').contains('Start Quiz').click();
+        cy.intercept('GET', 'http://127.0.0.1:3001/api/questions', { 
+            statusCode: 200,
+            fixture: 'questions.json' 
+        }).as('getQuestions');
+    
+        cy.get('.btn.btn-primary').first().click();
+    
+        cy.get('.btn.btn-primary').each(($btn) => {
+          cy.wrap($btn).click();
         });
+    
+        cy.get('button').contains('Take New Quiz').click();
+    
+        cy.get('button').contains('Start Quiz').should('exist');
       });
-  
-      // Click start quiz button
-      cy.get('button')
-        .contains('Start Quiz')
-        .click();
-  
-      // Wait and verify
-      cy.wait('@getQuestions', { timeout: 10000 });
-    });
-  });
+});
+   
