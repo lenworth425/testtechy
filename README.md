@@ -20,17 +20,12 @@ The [Video Link](https://drive.google.com/file/d/1SV0rttO6iN69uzQqz0WLZd3XlWgoRN
 ### Screenshots
 The application
 
-![Screenshot 1](./assets/Screenshot1.png)
+![Screenshot 1](./assets/demo.gif)
 
 The Test
 
 ![Screenshot 2](./assets/Screenshot2.png)
 
-
-![Screenshot 3](./assets/Screenshot3.png)
-
-
-![Screenshot 4](./assets/Screenshot4.png)
 
 
 

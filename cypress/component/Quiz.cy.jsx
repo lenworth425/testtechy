@@ -1,32 +1,38 @@
-import React from 'react';
 import Quiz from '../../client/src/components/Quiz';
 
-const questions = [
-    {
-        "id": 1,
-        "question": "What is the capital of France?",
-        "answer": "Paris",
-        "difficulty": "easy"
+describe('Quiz Component', () => {
+  beforeEach(() => {
+    cy.intercept({
+        method: 'GET',
+        url: '/api/questions/random'
       },
       {
-        "id": 2,
-        "question": "Who wrote Romeo and Juliet?",
-        "answer": "William Shakespeare",
-        "difficulty": "medium"
+        fixture: 'questions.json',
+        statusCode: 200
       }
+      ).as('getRandomQuestion')
+    });
 
-]   
+  it('should start the quiz and display the first question', () => {
+    cy.mount(<Quiz />);
+    cy.get('button').contains('Start Quiz').click();
+    cy.get('.card').should('be.visible');
+    cy.get('h2').should('not.be.empty');
+  });
 
-describe('Quiz', () => {
-    it('should render the quiz component', () => {
-        cy.mount(<Quiz questions={questions} />)
-    })
+  it('should answer questions and complete the quiz', () => {
+    cy.mount(<Quiz />);
+    cy.get('button').contains('Start Quiz').click();
+    cy.get('.card h2').should('exist');
+    cy.get('button').first().click();  });
 
-    it('renders a start button', () => {
-        cy.mount(<Quiz questions={questions} />)
-        cy.get('button').should('have.text', 'Start Quiz')
-    })
-    
-
-
-})
+  it('should restart the quiz after completion', () => {
+    cy.mount(<Quiz />);
+    cy.get('button').contains('Start Quiz').click();
+    cy.get('.card h2').should('exist');
+    cy.get('button').first().click();
+    cy.get('button').first().click();
+    cy.get('.alert.alert-success').should('contain', 'Your score:');
+    cy.get('button').contains('Take New Quiz').click();
+  });
+});

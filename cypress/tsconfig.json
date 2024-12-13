@@ -1,8 +1,8 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM"],
+    "target": "es5",
+    "lib": ["ES2015", "DOM"],
     "types": ["cypress", "node"],
     "isolatedModules": false,
     "noEmit": true,
@@ -10,5 +10,5 @@
     "jsx": "react-jsx",
     "strict": true
   },
-  "include": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx"]
+  "include": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx", "../client/src/components/Quiz.tsx"]
 }
