@@ -14,7 +14,7 @@ To following was done to complete the testing:
     Create an end-to-test for the quiz component.
 
 ## Walkthrough
-The [Video Link](https://drive.google.com/file/d/1SV0rttO6iN69uzQqz0WLZd3XlWgoRNmS/view?usp=sharing) and screenshots below will show you the testing of the code.
+The [Video Link](https://drive.google.com/file/d/1YV_thMSk7AdLn0mMrtTBFnfug7Enudvv/view?usp=sharing) and screenshots below will show you the testing of the code.
 
 
 ### Screenshots
